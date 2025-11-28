@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "GhostText: AI Privacy Firewall",
+  "version": "2.0",
+  "description": "Active Defense against AI Data Leaks.",
+  "permissions": ["storage"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ]
+}

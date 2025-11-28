@@ -1,0 +1,7 @@
+/* When risk is detected, we can add a warning badge */
+.ghost-warning::after {
+    content: "⚠️ PII Detected!";
+    color: red;
+    font-weight: bold;
+    display: block;
+}
