@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "GhostText: AI Privacy Firewall",
-  "version": "2.0",
-  "description": "Active Defense against AI Data Leaks.",
+  "name": "GhostText: Cyber Defense",
+  "version": "3.0",
+  "description": "Advanced DLP Firewall for AI Chatbots. Protects PII, Keys, and Secrets.",
   "permissions": ["storage"],
   "action": {
     "default_popup": "popup.html"
