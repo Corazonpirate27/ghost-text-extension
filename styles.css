@@ -1,7 +1,14 @@
-/* When risk is detected, we can add a warning badge */
-.ghost-warning::after {
-    content: "⚠️ PII Detected!";
-    color: red;
-    font-weight: bold;
-    display: block;
+/* GhostText Visual Feedback */
+
+/* The class added when a threat is blocked */
+.ghost-flash {
+    border: 4px solid #00ff41 !important;
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.3) !important;
+    transition: border 0.2s ease-in-out !important;
+}
+
+/* Optional: Animation to fade it out nicely */
+@keyframes ghostFade {
+    0% { border-color: #00ff41; }
+    100% { border-color: transparent; }
 }
