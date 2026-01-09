@@ -1,51 +1,75 @@
-# 🛡️ GhostText: AI Privacy Firewall (DLP)
+🛡️ GhostText: Cyber Defense (v3.0)
 
-**GhostText** is a browser-based Data Loss Prevention (DLP) agent designed to prevent accidental leakage of PII (Personally Identifiable Information) into Large Language Models (LLMs) like ChatGPT, Claude, and Gemini.
+GhostText is an advanced browser-based Data Loss Prevention (DLP) firewall designed for the AI era. It acts as an active interceptor between your keyboard and AI chatbots (like ChatGPT, Claude, Gemini), automatically detecting and redacting sensitive data before it leaves your browser.
 
-Unlike standard ad-blockers, GhostText acts as an **Active Defense** layer, using a "man-in-the-browser" approach to intercept, sanitize, and redact sensitive data *before* it leaves the user's device.
+"Stop data leaks before they happen."
 
-![Version](https://img.shields.io/badge/version-2.0-blue) ![Security](https://img.shields.io/badge/Security-Active%20Defense-green) ![Platform](https://img.shields.io/badge/Platform-Chrome%20Extension%20(MV3)-orange)
+🚀 Features
 
-## 🚀 Key Features
+🔒 Active Interception
 
-* **🔒 Real-Time Redaction:** Instantly detects and blocks sensitive data patterns (Emails, Phone Numbers, IPv4 Addresses, Credit Cards).
-* **⚡ Active Interception:** Hooks into the DOM's `keydown` events (Capture Phase) to stop data submission at the network boundary.
-* **⚛️ React/SPA Compatible:** Uses advanced DOM manipulation to force updates on shadow-DOM inputs used by modern AI interfaces (ChatGPT/Gemini).
-* **🎛️ Kill Switch:** Integrated popup control panel to toggle protections On/Off dynamically.
-* **📊 Threat Counter:** Local storage tracking of prevented data leaks for audit purposes.
+GhostText hooks into the browser's event loop at the Capture Phase, intercepting the Enter key milliseconds before the data is submitted. If a threat is detected, the submission is blocked, the data is redacted, and the safe version is inserted back into the input field.
 
-## 🛠️ Technical Architecture
+🕵️‍♂️ Comprehensive Threat Detection
 
-GhostText operates as a **Manifest V3** Chrome Extension with zero external dependencies.
+We don't just stop emails. GhostText detects over 15 types of sensitive data:
 
-* **Detection Engine:** Custom Regex-based pattern matching running purely client-side (Privacy by Design).
-* **Event Handling:** Utilization of `e.stopImmediatePropagation()` to override default browser submit actions.
-* **State Management:** `chrome.storage.local` for persisting user preferences and threat statistics.
+Personal Identity (PII): Emails, Phone Numbers, SSNs.
 
-## 📦 Installation (Developer Mode)
+Financial Data: Credit Cards (13-16 digits), Crypto Wallet Addresses (ETH/BTC), Stripe Live Keys.
 
-Since this is a security tool in active development, it is installed via "Unpacked" mode:
+Developer Secrets: AWS Access Keys, Google Cloud API Keys, Slack Tokens, GitHub Tokens, SSH Private Keys, JWTs.
 
-1.  Clone or download this repository.
-2.  Open Chrome and navigate to `chrome://extensions/`.
-3.  Toggle **Developer mode** (top right corner).
-4.  Click **Load unpacked**.
-5.  Select the `ghost-text-extension` folder.
+Network Infrastructure: IPv4 Addresses, IPv6 Addresses, MAC Addresses.
 
-## 🛡️ Security Logic
+🎛️ Cyberpunk Control Panel
 
-The tool monitors for the following PII patterns:
+Kill Switch: Toggle the active defense system On/Off instantly via the popup menu.
 
-| Risk Type | Detection Method | Action |
-| :--- | :--- | :--- |
-| **Email Addresses** | Regex (Standard RFC 5322) | Redact to `[EMAIL_REDACTED]` |
-| **Phone Numbers** | Regex (International Formats) | Redact to `[PHONE_REDACTED]` |
-| **IPv4 Addresses** | Regex (0.0.0.0 - 255.255.255.255) | Redact to `[IP_REDACTED]` |
-| **Credit Cards** | Regex (13-16 digit strings) | Redact to `[CC_REDACTED]` |
+Live Stats: Track the number of data leaks prevented in real-time with a persistent counter.
 
-## ⚠️ Disclaimer
+Visual Feedback: Input fields flash Hacker Green when a threat is successfully neutralized.
 
-This tool is a Proof of Concept (PoC) for **Endpoint Security Engineering**. It is designed for educational and defensive purposes. While it effectively blocks common data leaks, no client-side tool is 100% impenetrable. Always practice safe data handling.
+📦 Installation (Developer Mode)
 
----
-*Built by [corazonpirate27] as part of an Advanced AI Security Portfolio.*
+Since this is a specialized security tool, you can install it directly from the source:
+
+Download/Clone this repository to your computer.
+
+Open Google Chrome (or Edge/Brave) and navigate to chrome://extensions/.
+
+Toggle Developer mode in the top-right corner.
+
+Click Load unpacked in the top-left corner.
+
+Select the folder containing the manifest.json file.
+
+The GhostText shield icon should appear in your toolbar.
+
+🎮 How to Test
+
+Open the extension popup and ensure the system is ARMED.
+
+Go to ChatGPT or any text input field.
+
+Type a fake credit card number: 4532 1234 5678 9012.
+
+Press Enter.
+
+Result: The send will be blocked, the text will change to [CC_REDACTED], and the box will flash green.
+
+🛡️ Privacy Policy
+
+Effective Date: January 2026
+
+No Data Collection: GhostText does NOT collect, store, or transmit any keystrokes, input data, or browsing history.
+
+Local Processing: All Regular Expression (Regex) matching occurs 100% locally within your browser sandbox.
+
+Permissions: The storage permission is used solely to save your On/Off preference and local stats counter.
+
+⚠️ Disclaimer
+
+This tool is a defensive Proof of Concept (PoC) for Endpoint Security. While it effectively prevents accidental data leakage, no client-side tool is a replacement for comprehensive enterprise security policies. Always handle sensitive data with care.
+
+Built with ❤️ for the Cyber Security Community.
