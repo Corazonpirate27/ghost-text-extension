@@ -12,3 +12,83 @@
     0% { border-color: #00ff41; }
     100% { border-color: transparent; }
 }
+
+/* --- GhostText Warning Modal --- */
+.ghost-modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 2147483647; /* Max z-index */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(2px);
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.ghost-modal-content {
+    background: #050505;
+    border: 2px solid #00ff41;
+    color: #fff;
+    padding: 20px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+    text-align: center;
+    position: relative;
+    /* Scanline background effect */
+    background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 2px, 3px 100%;
+}
+
+.ghost-modal-header {
+    color: #00ff41;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    text-shadow: 0 0 5px rgba(0, 255, 65, 0.8);
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+
+.ghost-modal-body {
+    font-size: 14px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    color: #ccc;
+}
+
+.ghost-threat-list {
+    color: #ff3333; /* Red for danger */
+    font-weight: bold;
+    margin: 10px 0;
+    display: block;
+    text-align: left;
+    background: #1a0000;
+    padding: 10px;
+    border: 1px solid #ff3333;
+}
+
+.ghost-modal-footer {
+    margin-top: 15px;
+}
+
+.ghost-modal-btn {
+    background: transparent;
+    border: 1px solid #00ff41;
+    color: #00ff41;
+    padding: 8px 16px;
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+}
+
+.ghost-modal-btn:hover {
+    background: #00ff41;
+    color: #000;
+    box-shadow: 0 0 10px #00ff41;
+}
