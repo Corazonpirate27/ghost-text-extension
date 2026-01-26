@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "GhostText: Cyber Defense",
   "version": "3.0",
-  "description": "Advanced DLP Firewall for AI Chatbots. Protects PII, Keys, and Secrets.",
+  "description": "Prevents sensitive data leaks in AI chatbots by detecting and redacting PII, keys, and secrets in real-time.",
   "permissions": ["storage"],
   "action": {
     "default_popup": "popup.html"
