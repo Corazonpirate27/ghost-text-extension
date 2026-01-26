@@ -12,15 +12,15 @@ GhostText hooks into the browser's event loop at the Capture Phase, intercepting
 
 🕵️‍♂️ Comprehensive Threat Detection
 
-We don't just stop emails. GhostText detects over 15 types of sensitive data:
+We don't just stop emails. GhostText detects over 15 types of sensitive data with high precision:
 
-Personal Identity (PII): Emails, Phone Numbers, SSNs.
+Personal Identity (PII): Emails, Phone Numbers (Context-aware detection), SSNs.
 
 Financial Data: Credit Cards (13-16 digits), Crypto Wallet Addresses (ETH/BTC), Stripe Live Keys.
 
 Developer Secrets: AWS Access Keys, Google Cloud API Keys, Slack Tokens, GitHub Tokens, SSH Private Keys, JWTs.
 
-Network Infrastructure: IPv4 Addresses, IPv6 Addresses, MAC Addresses.
+Network Infrastructure: IPv4 Addresses (Validates 0-255 range), IPv6 Addresses, MAC Addresses.
 
 🎛️ Cyberpunk Control Panel
 
