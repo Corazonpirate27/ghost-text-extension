@@ -34,7 +34,8 @@ function incrementStats() {
 const PATTERNS = {
     // --- Personal Identity ---
     email: { regex: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, replacement: '[EMAIL_REDACTED]' },
-    phone: { regex: /(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/g, replacement: '[PHONE_REDACTED]' },
+    // Uses lookbehind for space or boundary for start of number to avoid consuming preceding words
+    phone: { regex: /(?:(?:\b|(?<=\s))\+?\d{1,3}[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\b/g, replacement: '[PHONE_REDACTED]' },
     ssn: { regex: /\b\d{3}-\d{2}-\d{4}\b/g, replacement: '[SSN_REDACTED]' },
 
     // --- Financial ---
@@ -43,7 +44,8 @@ const PATTERNS = {
     stripeKey: { regex: /(sk|pk)_(live|test)_[a-zA-Z0-9]{24,}/g, replacement: '[STRIPE_KEY_REDACTED]' },
 
     // --- Network/Infra ---
-    ipv4: { regex: /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g, replacement: '[IPV4_REDACTED]' },
+    // Improved IPv4 regex to check range 0-255
+    ipv4: { regex: /\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/g, replacement: '[IPV4_REDACTED]' },
     macAddress: { regex: /\b([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})\b/g, replacement: '[MAC_ADDR_REDACTED]' },
 
     // --- Developer Keys ---
@@ -79,6 +81,8 @@ window.addEventListener('keydown', (e) => {
         // Check if any threat exists
         let hasThreat = false;
         for (const type in PATTERNS) {
+            // Reset lastIndex for global regexes to ensure correct testing
+            PATTERNS[type].regex.lastIndex = 0;
             if (PATTERNS[type].regex.test(text)) {
                 hasThreat = true;
                 break;
@@ -95,13 +99,17 @@ window.addEventListener('keydown', (e) => {
             const clean = sanitizeText(text);
 
             // C. Insert clean text
-            if (target.isContentEditable) {
-                target.focus();
-                document.execCommand('selectAll', false, null);
-                document.execCommand('insertText', false, clean);
-            } else {
-                target.value = clean;
-                target.dispatchEvent(new Event('input', { bubbles: true }));
+            try {
+                if (target.isContentEditable) {
+                    target.focus();
+                    document.execCommand('selectAll', false, null);
+                    document.execCommand('insertText', false, clean);
+                } else {
+                    target.value = clean;
+                    target.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            } catch (err) {
+                console.error("GhostText: Failed to insert redacted text.", err);
             }
 
             // D. Visual Success Indicator
