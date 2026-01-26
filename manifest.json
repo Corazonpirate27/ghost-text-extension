@@ -5,7 +5,7 @@
   "description": "Prevents sensitive data leaks in AI chatbots by detecting and redacting PII, keys, and secrets in real-time.",
   "permissions": ["storage"],
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "panel.html"
   },
   "content_scripts": [
     {
