@@ -26,6 +26,12 @@ Sentence Detection: Catches full sentences like "My password is xyz" or "The API
 
 Custom Rules: Add your own regex patterns for unique threats.
 
+📬 Email & URL Threat Analyzer
+
+GhostText now locally analyzes pasted or typed text for phishing signals before you act on it. It checks urgent language, HTTP links, IP-address URLs, deep subdomains, strange URL characters, shortened links, lookalike domains such as paypa1.com, sensitive URL words like login or verify, and visible-text/actual-link mismatches in markdown or HTML links.
+
+The analyzer runs entirely in JavaScript inside the browser. It does not send the message text to any external API.
+
 🛡️ Site Whitelisting
 
 Whitelist trusted domains to skip protection on internal tools or known safe sites.
@@ -93,6 +99,27 @@ Type a fake credit card number: 4532 1234 5678 9012.
 Press Enter.
 
 Result: The send will be blocked, the text will change to [CC_REDACTED], and the box will flash green.
+
+To test Email & URL Threat Analysis:
+
+Open the GhostText panel and choose Threat Analysis.
+
+Paste any of these sample inputs:
+
+Safe email:
+Hi Sam, the project notes are ready at https://docs.google.com/document/demo. Thanks.
+
+Phishing email with urgent words:
+URGENT: Your account suspended warning requires you to verify now immediately at http://billing.example.com/login.
+
+Lookalike PayPal domain:
+Payment failed. Please review your account at https://paypa1.com/secure/account/update.
+
+Shortened suspicious link:
+Limited time reset required: https://bit.ly/secure-password-reset
+
+You can also run the sample cases with Node if available:
+node test-examples/threat-analyzer-samples.js
 
 🛡️ Privacy Policy
 

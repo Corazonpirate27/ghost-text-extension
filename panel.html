@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>GhostText v4</title>
+    <title>Ghost Guard</title>
+    <script>
+        document.documentElement.dataset.theme = localStorage.getItem('ghostGuardTheme') || 'dark';
+    </script>
     <style>
         :root {
             color-scheme: light;
@@ -17,25 +20,60 @@
 
         body {
             margin: 0;
-            padding: 18px;
-            min-width: 340px;
+            padding: 0;
+            width: 100vw;
+            min-width: 980px;
+            min-height: 100vh;
             background: #f5f7fb;
             color: #111827;
+            overflow: auto;
+        }
+
+        /* Custom scrollbar for better look */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
 
         .container {
-            display: grid;
-            gap: 16px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: min(1280px, 100%);
+            margin: 0 auto;
+            padding: 28px;
+        }
+
+        .header-section {
+            flex-shrink: 0;
+        }
+
+        .scrollable-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-right: 6px;
+            margin-right: -6px;
         }
 
         .tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(11, minmax(0, 1fr));
+            margin-bottom: 20px;
         }
 
         .tab {
-            padding: 8px 16px;
+            padding: 11px 12px;
+            font-size: 0.9rem;
             border: none;
             background: #e5e7eb;
             color: #6b7280;
@@ -43,6 +81,7 @@
             cursor: pointer;
             font-weight: 600;
             transition: 0.2s;
+            flex-grow: 1;
         }
 
         .tab.active {
@@ -58,11 +97,23 @@
             display: block;
         }
 
+        .dashboard-grid {
+            display: grid;
+            gap: 18px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            align-items: start;
+        }
+
+        .dashboard-grid .card:first-child,
+        .dashboard-grid .wide-card {
+            grid-column: span 2;
+        }
+
         .card {
             background: #ffffff;
             border: 1px solid #e5e7eb;
-            border-radius: 18px;
-            padding: 18px;
+            border-radius: 8px;
+            padding: 22px;
             box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
         }
 
@@ -73,23 +124,22 @@
         }
 
         .logo {
-            width: 40px;
-            height: 40px;
+            width: 64px;
+            height: 64px;
             border-radius: 12px;
-            background: #dbeafe;
-            padding: 8px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
         }
 
         .hero-title {
             margin: 0;
-            font-size: 1.1rem;
+            font-size: 1.8rem;
             font-weight: 700;
         }
 
         .hero-subtitle {
             margin: 6px 0 0;
             color: #6b7280;
-            font-size: 0.92rem;
+            font-size: 1rem;
             line-height: 1.4;
         }
 
@@ -106,6 +156,10 @@
         .metrics {
             display: grid;
             gap: 12px;
+        }
+
+        .metric-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
         }
 
         .metric {
@@ -218,7 +272,7 @@
 
         .button {
             border: none;
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 12px 14px;
             font-weight: 700;
             cursor: pointer;
@@ -245,70 +299,973 @@
             color: #6b7280;
             margin: 0;
         }
+
+        .ai-grid {
+            display: grid;
+            gap: 14px;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .ai-card {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 150px;
+        }
+
+        .ai-card strong {
+            display: block;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            color: #111827;
+        }
+
+        .ai-card span {
+            color: #4b5563;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .network-grid {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .network-card {
+            min-height: 78px;
+            padding: 14px;
+            border-radius: 8px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .network-card.wide {
+            grid-column: span 2;
+        }
+
+        .network-card.full {
+            grid-column: span 4;
+        }
+
+        .network-label {
+            font-size: 0.72rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        .network-value {
+            color: #111827;
+            font-size: 0.95rem;
+            font-weight: 800;
+            overflow-wrap: anywhere;
+        }
+
+        .network-value.large {
+            font-size: 1.35rem;
+        }
+
+        .scanner-search {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .scanner-search input {
+            width: 100%;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 12px 14px;
+            font: inherit;
+            color: #111827;
+            background: #ffffff;
+        }
+
+        .scanner-details {
+            margin: 16px 0 0;
+            padding: 0;
+            list-style: none;
+            display: grid;
+            gap: 8px;
+        }
+
+        .scanner-details li {
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+
+        .history-list {
+            display: grid;
+            gap: 10px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .history-item {
+            display: grid;
+            grid-template-columns: 86px minmax(0, 1fr) auto;
+            gap: 12px;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+
+        .history-score {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            border: 4px solid #10b981;
+            font-weight: 900;
+        }
+
+        .history-meta strong,
+        .history-meta span {
+            display: block;
+            overflow-wrap: anywhere;
+        }
+
+        .history-meta span {
+            color: #6b7280;
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        .status-chip {
+            padding: 7px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .threat-grid {
+            display: grid;
+            gap: 14px;
+            grid-template-columns: minmax(0, 1fr) 260px;
+            align-items: start;
+        }
+
+        .threat-input {
+            width: 100%;
+            min-height: 190px;
+            resize: vertical;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 12px 14px;
+            font: inherit;
+            line-height: 1.5;
+            color: #111827;
+            background: #ffffff;
+        }
+
+        .threat-summary {
+            display: grid;
+            gap: 10px;
+        }
+
+        .threat-meter {
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            padding: 16px;
+            background: #f8fafc;
+        }
+
+        .threat-risk {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .threat-risk.low {
+            color: #059669;
+        }
+
+        .threat-risk.medium {
+            color: #d97706;
+        }
+
+        .threat-risk.high {
+            color: #dc2626;
+        }
+
+        .threat-flag-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 8px;
+        }
+
+        .threat-flag-list li {
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+            color: #374151;
+            font-size: 0.9rem;
+            overflow-wrap: anywhere;
+        }
+
+        .threat-url-list {
+            list-style: none;
+            margin: 8px 0 0;
+            padding: 0;
+            display: grid;
+            gap: 6px;
+            color: #4b5563;
+            font-size: 0.85rem;
+            overflow-wrap: anywhere;
+        }
+
+        .recommendation-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 10px;
+        }
+
+        .recommendation-item {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            gap: 12px;
+            align-items: start;
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+
+        .recommendation-dot {
+            width: 10px;
+            height: 10px;
+            margin-top: 5px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 14px rgba(16, 185, 129, 0.4);
+        }
+
+        .recommendation-item.warning .recommendation-dot {
+            background: #f59e0b;
+            box-shadow: 0 0 14px rgba(245, 158, 11, 0.38);
+        }
+
+        .recommendation-item.danger .recommendation-dot {
+            background: #ef4444;
+            box-shadow: 0 0 14px rgba(239, 68, 68, 0.38);
+        }
+
+        .recommendation-item strong,
+        .recommendation-item span {
+            display: block;
+            overflow-wrap: anywhere;
+        }
+
+        .recommendation-item strong {
+            color: #111827;
+            font-size: 0.95rem;
+        }
+
+        .recommendation-item span {
+            margin-top: 3px;
+            color: #6b7280;
+            font-size: 0.85rem;
+            line-height: 1.45;
+        }
+
+        @media (max-width: 900px) {
+            body {
+                min-width: 0;
+            }
+
+            .container {
+                padding: 16px;
+            }
+
+            .header {
+                align-items: flex-start;
+                flex-wrap: wrap;
+            }
+
+            .tabs,
+            .ai-grid,
+            .network-grid,
+            .scanner-search,
+            .threat-grid,
+            .history-item,
+            .metric-grid,
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-grid .card:first-child,
+            .dashboard-grid .wide-card,
+            .network-card.wide,
+            .network-card.full {
+                grid-column: auto;
+            }
+
+            .hero-title {
+                font-size: 1.45rem;
+            }
+        }
+
+        :root {
+            color-scheme: dark;
+            --page: #05070c;
+            --surface: rgba(9, 15, 24, 0.88);
+            --surface-soft: rgba(13, 24, 35, 0.84);
+            --border: rgba(52, 211, 153, 0.22);
+            --border-strong: rgba(52, 211, 153, 0.48);
+            --text: #ecfeff;
+            --muted: #91a7b2;
+            --primary: #34d399;
+            --primary-soft: rgba(52, 211, 153, 0.12);
+            --cyan: #67e8f9;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #fb7185;
+        }
+
+        html[data-theme="light"] {
+            color-scheme: light;
+            --page: #f6f8fb;
+            --surface: #ffffff;
+            --surface-soft: #f9fafb;
+            --border: #e5e7eb;
+            --border-strong: #cbd5e1;
+            --text: #111827;
+            --muted: #64748b;
+            --primary: #2563eb;
+            --primary-soft: #eff6ff;
+            --cyan: #0891b2;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+        }
+
+        body {
+            width: auto;
+            min-width: 960px;
+            overflow-x: hidden;
+            position: relative;
+            background:
+                radial-gradient(circle at 14% 12%, rgba(52, 211, 153, 0.13), transparent 27%),
+                radial-gradient(circle at 86% 6%, rgba(103, 232, 249, 0.11), transparent 26%),
+                linear-gradient(135deg, #05070c 0%, #09111a 54%, #020403 100%) !important;
+            background-size: 120% 120%, 120% 120%, 100% 100%;
+            animation: ghostBackgroundPulse 12s ease-in-out infinite alternate;
+            color: var(--text) !important;
+        }
+
+        html {
+            overflow-x: hidden;
+        }
+
+        body::before,
+        body::after {
+            content: "";
+            display: block !important;
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::before {
+            background-image:
+                linear-gradient(rgba(52, 211, 153, 0.055) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(52, 211, 153, 0.055) 1px, transparent 1px);
+            background-size: 42px 42px;
+            mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent 86%);
+            animation: gridDrift 18s linear infinite, gridGlow 6s ease-in-out infinite alternate;
+        }
+
+        body::after {
+            background: linear-gradient(transparent 48%, rgba(103, 232, 249, 0.05) 50%, transparent 52%);
+            background-size: 100% 8px;
+            opacity: 0.52;
+            mix-blend-mode: screen;
+            animation: scanlineDrift 1.8s linear infinite;
+        }
+
+        @keyframes ghostBackgroundPulse {
+            from { background-position: 0% 0%, 100% 0%, 0 0; }
+            to { background-position: 18% 12%, 82% 18%, 0 0; }
+        }
+
+        @keyframes gridDrift {
+            from { background-position: 0 0, 0 0; }
+            to { background-position: 42px 42px, 42px 42px; }
+        }
+
+        @keyframes gridGlow {
+            from { opacity: 0.58; }
+            to { opacity: 0.95; }
+        }
+
+        @keyframes scanlineDrift {
+            from { background-position: 0 0; }
+            to { background-position: 0 24px; }
+        }
+
+        .hacker-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 50% 118%, rgba(52, 211, 153, 0.14), transparent 34%),
+                linear-gradient(90deg, transparent, rgba(103, 232, 249, 0.04), transparent);
+            mix-blend-mode: screen;
+            mask-image: linear-gradient(90deg, transparent 0 2%, #000 10% 88%, transparent 98% 100%);
+        }
+
+        .hacker-backdrop::before,
+        .hacker-backdrop::after {
+            content: "";
+            position: absolute;
+            inset: -20%;
+            background:
+                conic-gradient(from 90deg at 50% 50%, transparent, rgba(52, 211, 153, 0.09), transparent 32%),
+                radial-gradient(circle at 50% 50%, rgba(103, 232, 249, 0.08), transparent 42%);
+            opacity: 0.38;
+            animation: circuitSweep 16s linear infinite;
+        }
+
+        .hacker-backdrop::after {
+            inset: -35%;
+            opacity: 0.2;
+            animation-duration: 24s;
+            animation-direction: reverse;
+        }
+
+        .data-rain {
+            position: absolute;
+            inset: -28vh 0 0;
+            color: rgba(52, 211, 153, 0.24);
+            font: 700 13px/1.35 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+            text-shadow: 0 0 12px rgba(52, 211, 153, 0.32);
+            white-space: pre-line;
+            writing-mode: vertical-rl;
+            opacity: 0;
+            transform: translate3d(0, -28vh, 0);
+            animation: matrixRain var(--fall-speed, 14s) linear infinite;
+            animation-delay: var(--fall-delay, 0s);
+        }
+
+        .data-rain::before {
+            content: attr(data-stream);
+        }
+
+        .data-rain:nth-child(1) { left: 3%; --fall-speed: 13s; --fall-delay: -7s; }
+        .data-rain:nth-child(2) { left: 9%; --fall-speed: 18s; --fall-delay: -12s; font-size: 11px; }
+        .data-rain:nth-child(3) { left: 15%; --fall-speed: 15s; --fall-delay: -4s; }
+        .data-rain:nth-child(4) { left: 22%; --fall-speed: 21s; --fall-delay: -16s; font-size: 12px; }
+        .data-rain:nth-child(5) { left: 29%; --fall-speed: 14s; --fall-delay: -10s; }
+        .data-rain:nth-child(6) { left: 35%; --fall-speed: 19s; --fall-delay: -2s; font-size: 10px; }
+        .data-rain:nth-child(7) { left: 42%; --fall-speed: 16s; --fall-delay: -13s; }
+        .data-rain:nth-child(8) { left: 48%; --fall-speed: 22s; --fall-delay: -6s; font-size: 12px; }
+        .data-rain:nth-child(9) { left: 55%; --fall-speed: 13s; --fall-delay: -1s; }
+        .data-rain:nth-child(10) { left: 61%; --fall-speed: 20s; --fall-delay: -14s; font-size: 11px; }
+        .data-rain:nth-child(11) { left: 68%; --fall-speed: 17s; --fall-delay: -8s; }
+        .data-rain:nth-child(12) { left: 74%; --fall-speed: 23s; --fall-delay: -19s; font-size: 10px; }
+        .data-rain:nth-child(13) { left: 78%; --fall-speed: 15s; --fall-delay: -5s; }
+        .data-rain:nth-child(14),
+        .data-rain:nth-child(15) { display: none; }
+
+        @keyframes matrixRain {
+            0% {
+                opacity: 0;
+                transform: translate3d(0, -32vh, 0);
+            }
+            8%, 76% {
+                opacity: 0.42;
+            }
+            100% {
+                opacity: 0;
+                transform: translate3d(0, 128vh, 0);
+            }
+        }
+
+        @keyframes circuitSweep {
+            from { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.08); }
+            to { transform: rotate(360deg) scale(1); }
+        }
+
+        html[data-theme="light"] body {
+            background: var(--page) !important;
+            animation: none !important;
+        }
+
+        html[data-theme="light"] body::before,
+        html[data-theme="light"] body::after,
+        html[data-theme="light"] .header::after,
+        html[data-theme="light"] .hacker-backdrop {
+            content: none !important;
+            display: none !important;
+        }
+
+        .container {
+            max-width: 1180px;
+            gap: 18px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            min-height: 92px;
+            position: relative;
+            overflow: hidden;
+            border-color: var(--border-strong) !important;
+            box-shadow: 0 18px 48px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+        }
+
+        .header::after {
+            content: "";
+            display: block !important;
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(110deg, transparent 0 38%, rgba(52, 211, 153, 0.14) 48%, transparent 58% 100%);
+            transform: translateX(-120%);
+            animation: panelSweep 5.8s ease-in-out infinite;
+        }
+
+        @keyframes panelSweep {
+            0%, 45% { transform: translateX(-120%); }
+            76%, 100% { transform: translateX(120%); }
+        }
+
+        .card,
+        .ai-card,
+        .network-card,
+        .metric,
+        .scanner-details li,
+        .threat-meter,
+        .recommendation-item,
+        .log-item,
+        .history-item,
+        #tipContent,
+        #threatRecommendation {
+            background: var(--surface) !important;
+            border-color: var(--border) !important;
+            color: var(--text) !important;
+            box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+        }
+
+        .logo {
+            width: 52px;
+            height: 52px;
+            border-radius: 10px;
+            background: rgba(52, 211, 153, 0.08);
+            border: 1px solid var(--border-strong);
+            box-shadow: 0 0 28px rgba(52, 211, 153, 0.22) !important;
+        }
+
+        .hero-title,
+        .network-value,
+        .metric strong,
+        .ai-card strong,
+        .recommendation-item strong,
+        .history-meta strong,
+        .scanner-details strong {
+            color: var(--text) !important;
+        }
+
+        .hero-subtitle,
+        .network-label,
+        .log-item span,
+        .ai-card span,
+        .history-meta span,
+        .recommendation-item span,
+        .empty,
+        .footer,
+        .scanner-details li,
+        .threat-url-list,
+        .metric span {
+            color: var(--muted) !important;
+        }
+
+        .section-title {
+            color: var(--primary) !important;
+            letter-spacing: 0.08em;
+        }
+
+        .status-pill {
+            background: rgba(52, 211, 153, 0.12) !important;
+            color: var(--primary) !important;
+            border: 1px solid var(--border-strong);
+            box-shadow: 0 0 24px rgba(52, 211, 153, 0.16);
+        }
+
+        .status-pill.is-paused {
+            background: rgba(251, 113, 133, 0.12) !important;
+            color: var(--danger) !important;
+            border-color: rgba(251, 113, 133, 0.35);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .theme-toggle {
+            min-width: 96px;
+            border: 1px solid var(--border) !important;
+            border-radius: 999px;
+            padding: 8px 12px;
+            background: var(--surface-soft) !important;
+            color: var(--text) !important;
+            font: inherit;
+            font-size: 0.78rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: transparent;
+            border: 0;
+            padding: 0;
+        }
+
+        .tab {
+            flex: 0 0 auto;
+            border-radius: 8px;
+            background: var(--surface) !important;
+            color: var(--muted) !important;
+            border: 1px solid var(--border) !important;
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+        }
+
+        .tab.active,
+        .tab:hover {
+            background: var(--primary-soft) !important;
+            border-color: var(--border-strong) !important;
+            color: var(--primary) !important;
+        }
+
+        .metric,
+        .network-card,
+        .threat-meter,
+        .scanner-details li,
+        .history-item,
+        .log-item {
+            background: var(--surface-soft) !important;
+            box-shadow: none !important;
+        }
+
+        .button {
+            border-radius: 8px;
+            border: 1px solid transparent !important;
+            letter-spacing: 0;
+        }
+
+        .button.primary {
+            background: var(--primary) !important;
+            color: #03120d !important;
+            box-shadow: 0 12px 28px rgba(52, 211, 153, 0.16);
+        }
+
+        .button.secondary {
+            background: rgba(148, 163, 184, 0.1) !important;
+            border-color: rgba(148, 163, 184, 0.18) !important;
+            color: var(--text) !important;
+        }
+
+        input,
+        textarea {
+            background: rgba(2, 6, 10, 0.8) !important;
+            border-color: var(--border) !important;
+            color: var(--text) !important;
+            caret-color: var(--primary);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #94a3b8;
+        }
+
+        input:checked + .slider {
+            background: var(--success) !important;
+            box-shadow: 0 0 18px rgba(52, 211, 153, 0.22);
+        }
+
+        .slider {
+            background: rgba(100, 116, 139, 0.6) !important;
+        }
+
+        .threat-risk.low { color: var(--success) !important; }
+        .threat-risk.medium { color: var(--warning) !important; }
+        .threat-risk.high { color: var(--danger) !important; }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(52, 211, 153, 0.36);
+        }
+
+        #analytics > div,
+        #customRulesList > li,
+        #whitelistList > li,
+        #trustedSitesList > li,
+        #trackerList > li,
+        .threat-flag-list li {
+            background: var(--surface-soft) !important;
+            border-color: var(--border) !important;
+            color: var(--text) !important;
+        }
+
+        #analytics span,
+        #customRulesList span,
+        #whitelistList span,
+        #trustedSitesList span,
+        #trackerList li,
+        .threat-flag-list span {
+            color: var(--muted) !important;
+        }
+
+        html[data-theme="light"] .card,
+        html[data-theme="light"] .ai-card,
+        html[data-theme="light"] .network-card,
+        html[data-theme="light"] .metric,
+        html[data-theme="light"] .scanner-details li,
+        html[data-theme="light"] .threat-meter,
+        html[data-theme="light"] .log-item,
+        html[data-theme="light"] .history-item,
+        html[data-theme="light"] #tipContent,
+        html[data-theme="light"] #threatRecommendation {
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05) !important;
+        }
+
+        html[data-theme="light"] .logo,
+        html[data-theme="light"] .status-pill,
+        html[data-theme="light"] .button.primary,
+        html[data-theme="light"] input:checked + .slider {
+            box-shadow: none !important;
+        }
+
+        html[data-theme="light"] .button.primary {
+            color: #ffffff !important;
+        }
+
+        html[data-theme="light"] .status-pill.is-paused {
+            background: #fef2f2 !important;
+            color: #991b1b !important;
+            border-color: #fecaca;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+
+        @media (max-width: 900px) {
+            body {
+                min-width: 0;
+            }
+
+            .tabs {
+                display: grid;
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="hacker-backdrop" aria-hidden="true">
+        <span class="data-rain" data-stream="GHOST TEXT 010010 77X TRACE SHIELD"></span>
+        <span class="data-rain" data-stream="SCAN NODE 4F9A BLOCK HASH 001101"></span>
+        <span class="data-rain" data-stream="CIPHER LINK PRIVACY MODE ENABLED"></span>
+        <span class="data-rain" data-stream="0X7A 0X13 0X99 SECURE CHANNEL"></span>
+        <span class="data-rain" data-stream="PHISH FILTER ACTIVE TOKEN MASK"></span>
+        <span class="data-rain" data-stream="PACKET WATCH LOCAL ONLY 101011"></span>
+        <span class="data-rain" data-stream="GHOST GUARD MEMORY CLEAN"></span>
+        <span class="data-rain" data-stream="THREAT TEXT ANALYSIS LIVE"></span>
+        <span class="data-rain" data-stream="REDTEAM SIGNAL DAMPENED"></span>
+        <span class="data-rain" data-stream="URL HEURISTIC CHECKSUM PASS"></span>
+        <span class="data-rain" data-stream="ZERO TRUST ROUTE 010111"></span>
+        <span class="data-rain" data-stream="IDENTITY LEAK SENSOR ARMED"></span>
+        <span class="data-rain" data-stream="TRACKER NULL ROUTE 0X00"></span>
+        <span class="data-rain" data-stream="LOCAL DEFENSE LOOP ONLINE"></span>
+        <span class="data-rain" data-stream="ENCRYPTED ECHO GHOST TEXT"></span>
+    </div>
     <div class="container">
-        <section class="card header">
-            <img src="logo.svg" alt="GhostText" class="logo" />
-            <div>
-                <h1 class="hero-title">GhostText v4</h1>
-                <p class="hero-subtitle">Protect personal data from AI chat prompts and keep your sensitive text safe.</p>
+        <div class="header-section">
+            <section class="card header" style="margin-bottom: 16px;">
+                <img src="icon128.png" alt="Ghost Guard" class="logo" />
+                <div>
+                    <h1 class="hero-title">Ghost Guard</h1>
+                    <p class="hero-subtitle">A clear browser defense panel for private text, risky links, trackers, and local security logs.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="theme-toggle" id="themeToggle" type="button">Dark</button>
+                    <span class="status-pill" id="statusBadge">Active</span>
+                </div>
+            </section>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="overview">Dashboard</button>
+                <button class="tab" data-tab="protection">Protection</button>
+                <button class="tab" data-tab="activity">Activity</button>
+                <button class="tab" data-tab="settings">Settings</button>
             </div>
-            <span class="status-pill" id="statusBadge">Active</span>
-        </section>
-
-        <div class="tabs">
-            <button class="tab active" data-tab="overview">Overview</button>
-            <button class="tab" data-tab="rules">Rules</button>
-            <button class="tab" data-tab="sites">Sites</button>
-            <button class="tab" data-tab="logs">Logs</button>
-            <button class="tab" data-tab="tips">Tips</button>
         </div>
 
-        <div id="overview" class="tab-content active">
-            <section class="card metrics">
-                <div class="metric">
-                    <span>Blocked events</span>
-                    <strong id="blockCount">0</strong>
-                </div>
-                <div class="metric toggle-row">
-                    <span>Defense status</span>
-                    <label class="switch">
-                        <input type="checkbox" id="toggleSecure" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <button class="button secondary" id="resetBtn" style="margin-top: 12px; width: 100%;">Reset Counter</button>
-            </section>
+        <div class="scrollable-content">
+            <div id="overview" class="tab-content active">
+            <div class="dashboard-grid">
+                <section class="card metrics metric-grid">
+                    <div class="metric">
+                        <span>Blocked events</span>
+                        <strong id="blockCount">0</strong>
+                    </div>
+                    <div class="metric toggle-row">
+                        <span>Defense status</span>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleSecure" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <button class="button secondary" id="resetBtn" style="width: 100%;">Reset Counter</button>
+                </section>
 
-            <section class="card">
-                <p class="section-title">Threat Breakdown</p>
-                <div id="analytics" style="display: grid; gap: 8px;">
-                    <div class="empty">No data yet.</div>
-                </div>
-            </section>
+                <section class="card wide-card">
+                    <p class="section-title">Threat Breakdown</p>
+                    <div id="analytics" style="display: grid; gap: 8px;">
+                        <div class="empty">No data yet.</div>
+                    </div>
+                </section>
+
+                <section class="card wide-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <p class="section-title" style="margin: 0;">Ad Blocker</p>
+                        <button class="button primary" id="adBlockPowerBtn" style="padding: 10px 14px;">Ad Block On</button>
+                    </div>
+                    <div class="metrics metric-grid">
+                        <div class="metric">
+                            <span>Total blocked</span>
+                            <strong id="adBlockTotalBlockedSummary">0</strong>
+                        </div>
+                        <div class="metric">
+                            <span>This tab</span>
+                            <strong id="adBlockTabBlockedSummary">0</strong>
+                        </div>
+                        <div class="metric">
+                            <span>Rule engine</span>
+                            <strong style="font-size: 1rem;">MV3 DNR</strong>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card wide-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <p class="section-title" style="margin: 0;">Recommended Actions</p>
+                        <button class="button secondary" id="applyRecommendedBtn" style="padding: 8px 12px;">Apply Recommended</button>
+                    </div>
+                    <ul id="recommendationsList" class="recommendation-list">
+                        <li class="empty">Checking your protection setup...</li>
+                    </ul>
+                </section>
+            </div>
         </div>
 
-        <div id="rules" class="tab-content">
+        <div id="protection" class="tab-content">
             <section class="card">
-                <p class="section-title">Custom Rules</p>
+                <p class="section-title">Website Risk Scanner</p>
+                <div class="scanner-search">
+                    <input id="scannerInput" type="text" placeholder="Enter website or URL to scan" />
+                    <button class="button primary" id="scanBtn">Scan Site</button>
+                </div>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <div id="trustScoreCircle" style="width: 60px; height: 60px; border-radius: 50%; border: 4px solid #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; color: #10b981;">
+                        100
+                    </div>
+                    <div>
+                        <strong id="scannerDomain" style="font-size: 1.1rem; display: block;">Loading...</strong>
+                        <span id="scannerStatus" style="font-size: 0.85rem; color: #6b7280;">Analyzing domain...</span>
+                    </div>
+                </div>
+                <button class="button secondary" id="trustScannedSiteBtn" style="margin-top: 14px;">Trust This Site</button>
+                <ul id="scannerDetails" class="scanner-details">
+                    <li>Open this tab or enter a URL to scan against live threat intel and local risk rules.</li>
+                </ul>
+            </section>
+
+            <section class="card" style="margin-top: 16px;">
+                <p class="section-title">Email & URL Threat Analysis</p>
+                <div class="threat-grid">
+                    <div>
+                        <textarea id="threatTextInput" class="threat-input" placeholder="Paste an email, message, or URL here"></textarea>
+                        <div class="button-row">
+                            <button class="button secondary" id="clearThreatInputBtn">Clear</button>
+                            <button class="button primary" id="loadThreatSampleBtn">Load Sample</button>
+                        </div>
+                    </div>
+                    <div class="threat-summary">
+                        <div class="threat-meter">
+                            <span class="network-label">Risk Level</span>
+                            <strong id="threatRiskLevel" class="threat-risk low">Low</strong>
+                            <span id="threatScoreText" class="network-value">Score 0</span>
+                        </div>
+                        <div class="threat-meter">
+                            <span class="network-label">Red Flags</span>
+                            <strong id="threatFlagCount" class="network-value large">0</strong>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 16px;">
+                    <p class="section-title">Detected Suspicious URLs</p>
+                    <ul id="threatUrlList" class="threat-url-list">
+                        <li>No suspicious URLs detected.</li>
+                    </ul>
+                </div>
+                <div style="margin-top: 16px;">
+                    <p class="section-title">Recommendation</p>
+                    <div id="threatRecommendation" style="padding: 12px; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 8px; color: #374151;">No obvious phishing indicators found in this text.</div>
+                </div>
+                <ul id="threatFlagList" class="threat-flag-list" style="margin-top: 16px;">
+                    <li>No red flags detected.</li>
+                </ul>
+            </section>
+
+            <section class="card" style="margin-top: 16px;">
+                <p class="section-title">Custom Secret Rules</p>
                 <input type="text" id="customRuleInput" placeholder="Enter regex pattern (e.g., \\bsecret\\w+\\b)" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; margin-bottom: 10px;">
                 <button class="button primary" id="addRuleBtn">Add Rule</button>
                 <ul id="customRulesList" style="list-style: none; padding: 0; margin-top: 10px;"></ul>
             </section>
         </div>
 
-        <div id="sites" class="tab-content">
-            <section class="card">
-                <p class="section-title">Site Whitelist</p>
-                <input type="text" id="siteInput" placeholder="Enter domain (e.g., chat.openai.com)" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; margin-bottom: 10px;">
-                <button class="button primary" id="addSiteBtn">Add Site</button>
-                <ul id="whitelistList" style="list-style: none; padding: 0; margin-top: 10px;"></ul>
-            </section>
-        </div>
-
-        <div id="logs" class="tab-content">
+        <div id="activity" class="tab-content">
             <section class="card">
                 <p class="section-title">Recent Logs</p>
                 <ul id="logList" class="log-list">
@@ -319,10 +1276,181 @@
                     <button class="button primary" id="exportLogsBtn">Export Logs</button>
                 </div>
             </section>
+
+            <section class="card" style="margin-top: 16px;">
+                <p class="section-title">Ad Block Stats</p>
+                <div class="metrics metric-grid">
+                    <div class="metric">
+                        <span>Total blocked</span>
+                        <strong id="adBlockTotalBlocked">0</strong>
+                    </div>
+                    <div class="metric">
+                        <span>This tab</span>
+                        <strong id="adBlockTabBlocked">0</strong>
+                    </div>
+                    <button class="button secondary" id="resetAdBlockStatsBtn" style="width: 100%;">Reset Stats</button>
+                </div>
+                <div style="margin-top: 16px;">
+                    <p class="section-title">Top Blocked Domains</p>
+                    <ul id="adBlockTopDomains" class="scanner-details">
+                        <li>No ad requests blocked yet.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="card" style="margin-top: 16px;">
+                <p class="section-title">Monitor History</p>
+                <ul id="monitorHistoryList" class="history-list">
+                    <li class="empty">No monitored sites yet.</li>
+                </ul>
+                <div class="button-row">
+                    <button class="button secondary" id="clearMonitorHistoryBtn">Clear History</button>
+                    <button class="button primary" id="exportMonitorHistoryBtn">Export History</button>
+                </div>
+            </section>
+
+            <details class="card" style="margin-top: 16px;">
+                <summary class="section-title" style="cursor: pointer;">Network Details</summary>
+                <div style="margin-top: 14px;">
+                    <div class="network-grid">
+                        <div class="network-card full">
+                            <span class="network-label">IP Address</span>
+                            <strong id="netIp" class="network-value large">Loading...</strong>
+                        </div>
+                        <div class="network-card wide">
+                            <span class="network-label">Location</span>
+                            <strong id="netLocation" class="network-value">Loading...</strong>
+                        </div>
+                        <div class="network-card wide">
+                            <span class="network-label">ISP / Organization</span>
+                            <strong id="netIsp" class="network-value">Loading...</strong>
+                        </div>
+                        <div class="network-card">
+                            <span class="network-label">IP Type</span>
+                            <strong id="netType" class="network-value">Loading...</strong>
+                        </div>
+                        <div class="network-card">
+                            <span class="network-label">ASN</span>
+                            <strong id="netAsn" class="network-value">Loading...</strong>
+                        </div>
+                        <div class="network-card">
+                            <span class="network-label">Timezone</span>
+                            <strong id="netTimezone" class="network-value">Loading...</strong>
+                        </div>
+                        <div class="network-card">
+                            <span class="network-label">Proxy / VPN</span>
+                            <strong id="netPrivacy" class="network-value">Loading...</strong>
+                        </div>
+                        <div class="network-card wide">
+                            <span class="network-label">Coordinates</span>
+                            <strong id="netCoordinates" class="network-value">Loading...</strong>
+                        </div>
+                        <div class="network-card wide">
+                            <span class="network-label">Provider Source</span>
+                            <strong id="netProvider" class="network-value">Loading...</strong>
+                        </div>
+                    </div>
+                    <button class="button secondary" id="refreshNetBtn" style="margin-top: 10px; width: 100%; padding: 8px;">Refresh Intel</button>
+                </div>
+            </details>
+
+            <details class="card" style="margin-top: 16px; padding: 0; overflow: hidden; background: #0f172a; border: 1px solid #1e293b;">
+                <summary class="section-title" style="cursor: pointer; padding: 14px; margin: 0;">Live Terminal Traffic</summary>
+                <div style="padding: 10px 14px; background: #1e293b; border-top: 1px solid #334155; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center;">
+                    <p class="section-title" style="color: #94a3b8; margin: 0; font-size: 0.7rem;">LIVE TERMINAL TRAFFIC</p>
+                    <div style="display: flex; gap: 5px;">
+                        <div style="width: 10px; height: 10px; border-radius: 50%; background: #ef4444;"></div>
+                        <div style="width: 10px; height: 10px; border-radius: 50%; background: #f59e0b;"></div>
+                        <div style="width: 10px; height: 10px; border-radius: 50%; background: #10b981;"></div>
+                    </div>
+                </div>
+                <div style="height: 190px; overflow-y: auto; color: #a5b4fc; padding: 10px 14px; font-family: 'Courier New', Courier, monospace; font-size: 0.75rem;">
+                    <ul id="liveTrafficList" style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px;">
+                        <li style="color: #64748b; text-align: center; padding: 20px 0;">Awaiting network handshake...</li>
+                    </ul>
+                </div>
+            </details>
         </div>
 
-        <div id="tips" class="tab-content">
+        <div id="settings" class="tab-content">
             <section class="card">
+                <p class="section-title">Ad Block Controls</p>
+                <div class="metrics metric-grid">
+                    <div class="metric toggle-row">
+                        <span>Network ad blocking</span>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleAdBlock" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="metric toggle-row">
+                        <span>Cosmetic ad hiding</span>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleCosmeticBlock" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="metric">
+                        <span>Rule engine</span>
+                        <strong style="font-size: 1rem;">MV3 DNR</strong>
+                    </div>
+                </div>
+                <ul class="scanner-details">
+                    <li>Expanded static network rules block common ad, analytics, bidding, and sponsored-content providers before they load.</li>
+                    <li>Cosmetic hiding removes common ad frames, sponsored units, promoted blocks, and empty ad containers from the page.</li>
+                </ul>
+            </section>
+
+            <section class="card" style="margin-top: 16px;">
+                <p class="section-title">Monitoring Controls</p>
+                <div class="metrics metric-grid">
+                    <div class="metric toggle-row">
+                        <span>Continuous monitoring</span>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleMonitor" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="metric toggle-row">
+                        <span>Risk popups</span>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleRiskPopups" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="metric toggle-row">
+                        <span>Badge alerts</span>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleBadgeAlerts" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card" style="margin-top: 16px;">
+                <p class="section-title">Site Whitelist</p>
+                <input type="text" id="siteInput" placeholder="Enter domain (e.g., chat.openai.com)" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; margin-bottom: 10px;">
+                <button class="button primary" id="addSiteBtn">Add Site</button>
+                <ul id="whitelistList" style="list-style: none; padding: 0; margin-top: 10px;"></ul>
+            </section>
+
+            <section class="card" style="margin-top: 16px;">
+                <p class="section-title">Trusted Scanner Sites</p>
+                <input type="text" id="trustedSiteInput" placeholder="Enter trusted domain (e.g., example.com)" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; margin-bottom: 10px;">
+                <button class="button primary" id="addTrustedSiteBtn">Trust Site</button>
+                <ul id="trustedSitesList" style="list-style: none; padding: 0; margin-top: 10px;"></ul>
+            </section>
+
+            <section class="card" style="margin-top: 16px; border-color: #fca5a5; background: #fef2f2;">
+                <p class="section-title" style="color: #fb7185;">Emergency</p>
+                <button class="button" id="panicBtn" style="background: #ef4444; color: white; width: 100%; font-weight: bold; padding: 14px; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    Wipe Last Hour
+                </button>
+            </section>
+
+            <section class="card" style="margin-top: 16px;">
                 <p class="section-title">Security Tips</p>
                 <div id="tipContent" style="padding: 16px; background: #f8fafc; border-radius: 12px; border: 1px solid #e5e7eb;">
                     <p style="margin: 0; font-size: 0.9rem; line-height: 1.5;">Loading tip...</p>
@@ -331,9 +1459,11 @@
             </section>
         </div>
 
-        <p class="footer">Logs are stored locally in the browser. Your typing data stays on your machine.</p>
+        <p class="footer" style="margin-top: 16px;">Logs are stored locally in the browser. Your typing data stays on your machine.</p>
+        </div>
     </div>
 
+    <script src="threat-analyzer.js"></script>
     <script src="popup.js"></script>
 </body>
 </html>

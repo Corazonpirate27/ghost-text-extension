@@ -1,22 +1,39 @@
 {
   "manifest_version": 3,
-  "name": "GhostText: Cyber Defense v4",
+  "name": "Ghost Guard",
   "version": "4.0",
-  "description": "Prevents sensitive data leaks in AI chatbots by detecting and redacting PII, secrets, and logs blocked events locally.",
-  "permissions": ["storage", "notifications", "clipboardRead"],
+  "description": "Protects private text, risky links, trackers, and security logs locally in your browser.",
+  "permissions": ["storage", "notifications", "clipboardRead", "webRequest", "browsingData", "tabs", "declarativeNetRequest", "declarativeNetRequestFeedback"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ghost_adblock",
+        "enabled": true,
+        "path": "rules/adblock-rules.json"
+      }
+    ]
+  },
   "icons": {
-    "16": "logo.svg",
-    "48": "logo.svg",
-    "128": "logo.svg"
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
   },
   "action": {
-    "default_popup": "panel.html",
-    "default_icon": "logo.svg"
+    "default_title": "Open Ghost Guard",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"],
+      "js": ["threat-analyzer.js", "content.js"],
       "css": ["styles.css"]
     }
   ]
